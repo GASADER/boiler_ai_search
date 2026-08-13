@@ -62,7 +62,7 @@ if "last_context" not in st.session_state:
 
 # ==================== SIDEBAR: LLM CONFIG ====================
 st.sidebar.header("⚙️ LLM Configuration")
-model_name = st.sidebar.text_input("Ollama Model", value="ollama/qwen2.5:7b")
+model_name = st.sidebar.text_input("Ollama Model", value="ollama/qwen3.5:4b")
 base_url = st.sidebar.text_input("Base URL", value="http://localhost:11434")
 temperature = st.sidebar.slider(
     "Temperature", min_value=0.0, max_value=1.0, value=0.2, step=0.1
@@ -100,28 +100,42 @@ def web_search_tool(query: str) -> str:
 # ==================== DYNAMIC AGENTS MANAGEMENT ====================
 if "custom_agents" not in st.session_state:
     st.session_state.custom_agents = [
-        {
-            "role": "Senior Tech Researcher",
-            "goal": "Find detailed technical specifications and news about the given topic.",
-            "backstory": "You are an expert technical researcher who excels at finding accurate news and benchmarks.",
-            "use_tools": True,
-            "shortcuts": [
-                "/Fact-Check - ตรวจสอบความถูกต้องของข้อมูลพร้อมระบุแหล่งอ้างอิง"
-            ],
-            "task_desc": "Search for the latest benchmarks, features, or updates regarding '{topic}'.",
-            "expected_output": "A summary of raw facts, benchmarks, and key points in English.",
-        },
-        {
-            "role": "บรรณาธิการข่าวไอทีภาษาไทย",
-            "goal": "แปลและเรียบเรียงเนื้อหาการเปรียบเทียบหรือข่าวสารเป็นภาษาไทยที่อ่านง่ายและถูกต้อง",
-            "backstory": "คุณเป็นบรรณาธิการข่าวไอทีมืออาชีพ คุณรับเนื้อหามาแปลและเรียบเรียงเป็นภาษาไทยที่สละสลวย",
-            "use_tools": False,
-            "shortcuts": [
-                "/ELI5 - อธิบายเรื่องซับซ้อนให้เข้าใจง่ายเหมือนอธิบายเด็ก 5 ขวบ"
-            ],
-            "task_desc": "นำข้อมูลเกี่ยวกับ {topic} ทั้งหมดมาแปลและเรียบเรียงสรุปเป็นภาษาไทย จัดรูปแบบด้วย Markdown ให้น่าอ่าน",
-            "expected_output": "บทความสรุปภาษาไทยล้วนอย่างสละสลวย",
-        },
+            {
+                "role": "Upstream & Energy Market Researcher",
+                "goal": "Find accurate data on crude oil/gas market trends, OPEC+ decisions, E&P activities, and geopolitical impacts on energy prices.",
+                "backstory": "You are a senior energy market intelligence analyst with 15 years of experience in the Oil & Gas sector. You specialize in tracking crude benchmarks (Brent, WTI), natural gas prices (HH, TTF), supply-demand dynamics, and global energy news.",
+                "use_tools": True,
+                "shortcuts": [
+                    "/Fact-Check - ตรวจสอบความถูกต้องของข้อมูลพร้อมระบุแหล่งอ้างอิง",
+                    "/EXEC SUMMARY - สรุปภาพรวมสำหรับผู้บริหารแบบสั้นและเห็นประเด็นสำคัญชัดเจน",
+                ],
+                "task_desc": "Search for the latest data, market reports, price trends, and key supply/demand drivers regarding '{topic}'. Use reliable global energy sources (e.g., IEA, OPEC, EIA, S&P Global Platts).",
+                "expected_output": "A comprehensive factual report covering market trends, crude/gas prices, geopolitical factors, and key quantitative data in English.",
+            },
+            {
+                "role": "Energy Techno-Economic & ESG Analyst",
+                "goal": "Analyze financial feasibility (CAPEX/OPEX), infrastructure logistics (Midstream/LNG), and environmental/regulatory impact (ESG & Carbon Neutrality).",
+                "backstory": "You are an energy strategist focusing on infrastructure, refining margins, LNG trade flows, and the energy transition (CCS/CCUS, Scope 1 & 2 emissions). You excel at breaking down complex industry metrics.",
+                "use_tools": True,
+                "shortcuts": [
+                    "/FIRST PRINCIPLES - รื้อถอนและวิเคราะห์ปัญหาจากหลักการพื้นฐานที่แท้จริง",
+                    "/CoT - Chain of Thought - คิดและแสดงขั้นตอนอย่างเป็นลำดับก่อนให้คำตอบ",
+                ],
+                "task_desc": "Analyze the technical, financial, and regulatory/ESG implications of the raw data collected regarding '{topic}'. Focus on value chain impact (Upstream/Midstream/Downstream) and risk factors.",
+                "expected_output": "Detailed analytical breakdown of cost/revenue drivers, supply chain constraints, ESG risks, and strategic impact.",
+            },
+            {
+                "role": "บรรณาธิการและนักวางกลยุทธ์ธุรกิจพลังงาน (Thai Energy Strategy Editor)",
+                "goal": "สรุป และเรียบเรียงข้อมูล Oil & Gas ทั้งหมดให้อยู่ในรูปแบบรายงานเชิงกลยุทธ์ภาษาไทยสำหรับผู้บริหาร",
+                "backstory": "คุณเป็นที่ปรึกษาด้านกลยุทธ์และบรรณาธิการข่าวธุรกิจพลังงานชั้นนำในไทย มีความเชี่ยวชาญในการแปลงศัพท์เทคนิคปิโตรเลียมให้เป็นภาษาธุรกิจที่เข้าใจง่าย และสามารถสรุปข้อเสนอแนะเชิงกลยุทธ์ที่นำไปใช้งานได้จริง",
+                "use_tools": True,
+                "shortcuts": [
+                    "/SWOT - วิเคราะห์ จุดแข็ง จุดอ่อน โอกาส และอุปสรรค",
+                    "/Table Only - จัดกลุ่มคำตอบเป็นตาราง Markdown เท่านั้น ห้ามมีเนื้อหาบรรยาย",
+                ],
+                "task_desc": "นำข้อมูลวิเคราะห์ทั้งหมดเกี่ยวกับ {topic} มาแปลและสังเคราะห์เป็นบทสรุปภาษาไทยแบบมืออาชีพ ใช้โครงสร้าง Markdown แบ่งหมวดหมู่ให้ชัดเจน (รวมถึงการเปรียบเทียบหรือ SWOT หากเหมาะสม)",
+                "expected_output": "รายงานสรุปเชิงกลยุทธ์ภาษาไทยที่อ่านง่ายเท่านั้น ครอบคลุมทั้งแนวโน้มตลาด ผลกระทบทางธุรกิจ และข้อเสนอแนะ",
+            },
     ]
 
 st.subheader("👥 จัดการคณะทำงานหลัก (Main Crew Agents)")

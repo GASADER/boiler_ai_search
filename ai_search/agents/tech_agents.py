@@ -4,7 +4,7 @@ from tools.search_tools import web_search_tool
 
 # กำหนด Ollama LLM
 ollama_llm = LLM(
-    model="ollama/qwen2.5:7b",
+    model="ollama/qwen3.5:4b",
     base_url="http://localhost:11434",
     api_key="ollama",
     temperature=0.2
